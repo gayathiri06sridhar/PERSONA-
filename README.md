@@ -1,73 +1,35 @@
-# Welcome to your Lovable project
+🌿 SERA: AI Mental Health Chatbot for Students 🧠 Overview
 
-## Project info
+SERA is an AI-powered mental health chatbot designed to create a stigma-free space for university students. It detects emotional distress through user interactions, bridges students with campus counsellors, and gamifies progress to make mental wellness approachable and engaging.
 
-**URL**: https://lovable.dev/projects/c95553d2-bfab-4551-810c-7d30c432a48f
+💡 Features
 
-## How can I edit this code?
+AI Chatbot: Uses NLP to identify signs of stress, anxiety, and burnout.
 
-There are several ways of editing your application.
+Diet & Lifestyle Suggestions: Offers gentle, optional wellness advice when academic stress is detected.
 
-**Use Lovable**
+Timetable Integration: Students can upload their academic calendar, and SERA auto-generates a personalized daily plan or self-care schedule.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c95553d2-bfab-4551-810c-7d30c432a48f) and start prompting.
+Counsellor Connection: Connects students to verified university counsellors when risk levels are high.
 
-Changes made via Lovable will be committed automatically to this repo.
+Gamified Interface: Encourages consistency through badges, levels, and small wins.
 
-**Use your preferred IDE**
+⚙️ Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Frontend: HTML, CSS, (optional React or Tailwind)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Backend: Flask + SQLite
 
-Follow these steps:
+AI/ML Model: OpenAI pre-trained model (fine-tuned for mental health support)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+APIs Used: Flask REST API for chatbot communication
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Database: SQLite (stores user sessions, emotion scores, and feedback)
 
-# Step 3: Install the necessary dependencies.
-npm i
+🧩 Architecture User → Chat Interface → Flask Backend → AI Model → University Database ↓ Timetable & Wellness Planner
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+Our diverse technical and research backgrounds make us capable of building an ethical, student-centered system that balances innovation and empathy.
 
-**Edit a file directly in GitHub**
+📊 Impact
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/c95553d2-bfab-4551-810c-7d30c432a48f) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+SERA promotes early identification of mental health concerns and encourages therapy-seeking behavior in a non-judgmental way. By integrating student routines and wellbeing tools, it creates a holistic ecosystem for mental wellness..
