@@ -507,6 +507,11 @@ const GameBoard = () => {
   };
 
   const startGame = () => {
+    if (!user) {
+      toast.error("Please log in to start the game");
+      navigate("/auth");
+      return;
+    }
     setGameStarted(true);
     setPlayerPosition(1);
     setDiceValue(null);
@@ -849,6 +854,26 @@ const GameBoard = () => {
       {gameStarted && (
         <div className="flex flex-col items-center gap-4 relative z-10 mt-8">
           <Dice value={diceValue} isRolling={isRolling} />
+          
+          {/* Progress Bar */}
+          <div className="w-full max-w-md bg-orange-200/50 dark:bg-orange-900/30 rounded-full p-1 border-2 border-orange-400 dark:border-orange-600">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-full bg-orange-100 dark:bg-orange-950 rounded-full h-8 overflow-hidden">
+                <div 
+                  className="bg-gradient-to-r from-orange-500 via-amber-500 to-red-500 h-full rounded-full transition-all duration-500 flex items-center justify-center"
+                  style={{ width: `${(answeredQuestions.length / 21) * 100}%` }}
+                >
+                  <span className="text-white text-sm font-bold px-2">
+                    {answeredQuestions.length > 0 && `${answeredQuestions.length}/21`}
+                  </span>
+                </div>
+              </div>
+              <p className="text-orange-900 dark:text-orange-200 font-semibold text-lg">
+                Remaining Questions: {21 - answeredQuestions.length}
+              </p>
+            </div>
+          </div>
+
           <Button
             onClick={rollDice}
             disabled={isRolling || isMoving || playerPosition === 100}
@@ -925,33 +950,101 @@ const GameBoard = () => {
       </Dialog>
 
       <Dialog open={showFinalResults} onOpenChange={setShowFinalResults}>
-        <DialogContent className="sm:max-w-2xl bg-card">
+        <DialogContent className="sm:max-w-2xl bg-card max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 to-teal-600 bg-clip-text text-transparent">
               Your Mental Health Assessment Results
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-6">
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-lg border-2 border-blue-200 dark:border-blue-800">
-              <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-400 mb-2">
-                🎯 Your Depression is {getDepressionLevel(depressionScore * 2)}
-              </h3>
-              <p className="text-3xl font-bold text-blue-800 dark:text-blue-300">({depressionScore * 2}/42)</p>
+          <div className="space-y-6 py-6">
+            {/* Student Information */}
+            <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950 dark:to-amber-950 rounded-lg p-4 border-2 border-orange-300 dark:border-orange-700">
+              <h3 className="text-lg font-semibold text-orange-900 dark:text-orange-100 mb-2">Student Information</h3>
+              <p className="text-orange-800 dark:text-orange-200">
+                <span className="font-semibold">Name:</span> {user?.user_metadata?.full_name || user?.email || "Student"}
+              </p>
+              <p className="text-orange-800 dark:text-orange-200">
+                <span className="font-semibold">Email:</span> {user?.email}
+              </p>
+            </div>
+            {/* Score Reports with Alert Symbols */}
+            <div className={`bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-lg border-2 ${
+              getDepressionLevel(depressionScore * 2) === "Extremely Severe" 
+                ? "border-red-500 ring-4 ring-red-300 dark:ring-red-700" 
+                : "border-blue-200 dark:border-blue-800"
+            }`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-blue-700 dark:text-blue-400 mb-1">
+                    Depression Score
+                  </h3>
+                  <p className="text-lg font-semibold text-blue-800 dark:text-blue-300">
+                    Level: {getDepressionLevel(depressionScore * 2)}
+                  </p>
+                  <p className="text-2xl font-bold text-blue-800 dark:text-blue-300 mt-1">
+                    Score: {depressionScore * 2}/42
+                  </p>
+                </div>
+                {getDepressionLevel(depressionScore * 2) === "Extremely Severe" && (
+                  <div className="flex flex-col items-center">
+                    <span className="text-6xl animate-pulse">⚠️</span>
+                    <span className="text-red-600 dark:text-red-400 font-bold text-sm mt-1">HIGH ALERT</span>
+                  </div>
+                )}
+              </div>
             </div>
             
-            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-6 rounded-lg border-2 border-yellow-200 dark:border-yellow-800">
-              <h3 className="text-2xl font-bold text-yellow-700 dark:text-yellow-400 mb-2">
-                💭 Your Anxiety is {getAnxietyLevel(anxietyScore * 2)}
-              </h3>
-              <p className="text-3xl font-bold text-yellow-800 dark:text-yellow-300">({anxietyScore * 2}/42)</p>
+            <div className={`bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-6 rounded-lg border-2 ${
+              getAnxietyLevel(anxietyScore * 2) === "Extremely Severe" 
+                ? "border-red-500 ring-4 ring-red-300 dark:ring-red-700" 
+                : "border-yellow-200 dark:border-yellow-800"
+            }`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-yellow-700 dark:text-yellow-400 mb-1">
+                    Anxiety Score
+                  </h3>
+                  <p className="text-lg font-semibold text-yellow-800 dark:text-yellow-300">
+                    Level: {getAnxietyLevel(anxietyScore * 2)}
+                  </p>
+                  <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-300 mt-1">
+                    Score: {anxietyScore * 2}/42
+                  </p>
+                </div>
+                {getAnxietyLevel(anxietyScore * 2) === "Extremely Severe" && (
+                  <div className="flex flex-col items-center">
+                    <span className="text-6xl animate-pulse">⚠️</span>
+                    <span className="text-red-600 dark:text-red-400 font-bold text-sm mt-1">HIGH ALERT</span>
+                  </div>
+                )}
+              </div>
             </div>
             
-            <div className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-6 rounded-lg border-2 border-red-200 dark:border-red-800">
-              <h3 className="text-2xl font-bold text-red-700 dark:text-red-400 mb-2">
-                ⚡ Your Stress is {getStressLevel(stressScore * 2)}
-              </h3>
-              <p className="text-3xl font-bold text-red-800 dark:text-red-300">({stressScore * 2}/42)</p>
+            <div className={`bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-6 rounded-lg border-2 ${
+              getStressLevel(stressScore * 2) === "Extremely Severe" 
+                ? "border-red-500 ring-4 ring-red-300 dark:ring-red-700" 
+                : "border-red-200 dark:border-red-800"
+            }`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-red-700 dark:text-red-400 mb-1">
+                    Stress Score
+                  </h3>
+                  <p className="text-lg font-semibold text-red-800 dark:text-red-300">
+                    Level: {getStressLevel(stressScore * 2)}
+                  </p>
+                  <p className="text-2xl font-bold text-red-800 dark:text-red-300 mt-1">
+                    Score: {stressScore * 2}/42
+                  </p>
+                </div>
+                {getStressLevel(stressScore * 2) === "Extremely Severe" && (
+                  <div className="flex flex-col items-center">
+                    <span className="text-6xl animate-pulse">⚠️</span>
+                    <span className="text-red-600 dark:text-red-400 font-bold text-sm mt-1">HIGH ALERT</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           
