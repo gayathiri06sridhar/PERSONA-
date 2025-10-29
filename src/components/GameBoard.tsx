@@ -4,6 +4,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 import Dice from "@/components/Dice";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 type PieceType = "pawn" | "king" | "queen" | "rook" | "bishop" | "knight" | null;
 
@@ -14,6 +17,7 @@ interface Piece {
 
 const GameBoard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [playerPosition, setPlayerPosition] = useState(1);
   const [diceValue, setDiceValue] = useState<number | null>(null);
   const [isRolling, setIsRolling] = useState(false);
@@ -29,6 +33,7 @@ const GameBoard = () => {
   const [depressionScore, setDepressionScore] = useState(0);
   const [showFinalResults, setShowFinalResults] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [scoresSaved, setScoresSaved] = useState(false);
 
   // Questions for specific positions
   const questionPositions = [5, 9, 14, 18, 23, 27, 30, 33, 37, 40, 48, 52, 56, 60, 64, 70, 75, 80, 87, 95, 98];
@@ -392,6 +397,28 @@ const GameBoard = () => {
     return moves;
   };
 
+  const saveScoresToDatabase = async () => {
+    if (!user || scoresSaved) return;
+
+    try {
+      const { error } = await supabase
+        .from("student_scores")
+        .insert({
+          user_id: user.id,
+          stress_score: stressScore * 2,
+          anxiety_score: anxietyScore * 2,
+          depression_score: depressionScore * 2
+        });
+
+      if (error) throw error;
+      setScoresSaved(true);
+      toast.success("Your scores have been saved!");
+    } catch (error: any) {
+      console.error("Error saving scores:", error);
+      toast.error("Failed to save scores");
+    }
+  };
+
   const rollDice = () => {
     if (!gameStarted) return;
     
@@ -448,9 +475,23 @@ const GameBoard = () => {
         
         // Check if reached 100
         if (newPosition === 100) {
-          setTimeout(() => {
-            setShowFinalResults(true);
-          }, 500);
+          // Check for any skipped questions before showing results
+          const skippedQuestions = questions.filter(q => 
+            newPosition >= q.position && 
+            !answeredQuestions.includes(q.id)
+          );
+          
+          if (skippedQuestions.length > 0) {
+            setTimeout(() => {
+              setCurrentQuestion(skippedQuestions[0]);
+              setShowQuestionDialog(true);
+            }, 500);
+          } else {
+            setTimeout(async () => {
+              await saveScoresToDatabase();
+              setShowFinalResults(true);
+            }, 500);
+          }
           return;
         }
         
@@ -483,6 +524,7 @@ const GameBoard = () => {
     setAnxietyScore(0);
     setDepressionScore(0);
     setShowFinalResults(false);
+    setScoresSaved(false);
   };
 
 
@@ -497,8 +539,24 @@ const GameBoard = () => {
           setValidMoves(bishopMoves);
           setTimeout(() => {
             const move = bishopMoves[0];
+            
+            // Check for skipped questions during bishop move
+            const skippedQuestions = questions.filter(q => 
+              move >= q.position && 
+              position < q.position && 
+              !answeredQuestions.includes(q.id)
+            );
+            
             setPlayerPosition(move);
             setValidMoves([]);
+            
+            // Ask skipped questions if any
+            if (skippedQuestions.length > 0) {
+              setTimeout(() => {
+                setCurrentQuestion(skippedQuestions[0]);
+                setShowQuestionDialog(true);
+              }, 500);
+            }
           }, 1500);
         }
         break;
@@ -506,7 +564,29 @@ const GameBoard = () => {
       case "rook":
         // Move +5 steps forward
         const rookMove = Math.min(position + 5, 100);
-        setTimeout(() => setPlayerPosition(rookMove), 1000);
+        
+        // Check for skipped questions during rook move
+        const rookSkippedQuestions = questions.filter(q => 
+          rookMove >= q.position && 
+          position < q.position && 
+          !answeredQuestions.includes(q.id)
+        );
+        
+        setTimeout(() => {
+          setPlayerPosition(rookMove);
+          
+          // Ask skipped questions if any
+          if (rookSkippedQuestions.length > 0) {
+            setTimeout(() => {
+              setCurrentQuestion(rookSkippedQuestions[0]);
+              setShowQuestionDialog(true);
+            }, 500);
+          } else if (rookMove === 100) {
+            setTimeout(() => {
+              setShowFinalResults(true);
+            }, 500);
+          }
+        }, 1000);
         break;
 
       case "queen":
@@ -521,8 +601,23 @@ const GameBoard = () => {
           setValidMoves(knightMoves);
           setTimeout(() => {
             const move = knightMoves[0];
+            
+            // Check for skipped questions during knight move
+            const knightSkippedQuestions = questions.filter(q => 
+              (move <= q.position && q.position <= position) && 
+              !answeredQuestions.includes(q.id)
+            );
+            
             setPlayerPosition(move);
             setValidMoves([]);
+            
+            // Ask skipped questions if any
+            if (knightSkippedQuestions.length > 0) {
+              setTimeout(() => {
+                setCurrentQuestion(knightSkippedQuestions[0]);
+                setShowQuestionDialog(true);
+              }, 500);
+            }
           }, 1500);
         }
         break;
@@ -530,16 +625,42 @@ const GameBoard = () => {
   };
 
   const handleQueenChoice = (choice: "diagonal" | "forward") => {
+    const currentPos = playerPosition;
+    let newPos: number;
+    
     if (choice === "diagonal") {
-      const diagonalMoves = getDiagonalMoves(playerPosition, 3);
+      const diagonalMoves = getDiagonalMoves(currentPos, 3);
       if (diagonalMoves.length > 0) {
-        setPlayerPosition(diagonalMoves[0]);
+        newPos = diagonalMoves[0];
+      } else {
+        setShowQueenDialog(false);
+        return;
       }
     } else {
-      const forwardMove = Math.min(playerPosition + 5, 100);
-      setPlayerPosition(forwardMove);
+      newPos = Math.min(currentPos + 5, 100);
     }
+    
+    // Check for skipped questions during queen move
+    const queenSkippedQuestions = questions.filter(q => 
+      newPos >= q.position && 
+      currentPos < q.position && 
+      !answeredQuestions.includes(q.id)
+    );
+    
+    setPlayerPosition(newPos);
     setShowQueenDialog(false);
+    
+    // Ask skipped questions if any
+    if (queenSkippedQuestions.length > 0) {
+      setTimeout(() => {
+        setCurrentQuestion(queenSkippedQuestions[0]);
+        setShowQuestionDialog(true);
+      }, 500);
+    } else if (newPos === 100) {
+      setTimeout(() => {
+        setShowFinalResults(true);
+      }, 500);
+    }
   };
 
   // Severity level calculation functions
@@ -596,6 +717,15 @@ const GameBoard = () => {
       setTimeout(() => {
         setCurrentQuestion(nextQuestion);
         setShowQuestionDialog(true);
+      }, 500);
+      return;
+    }
+    
+    // Check if reached 100 after answering all questions
+    if (playerPosition === 100) {
+      setTimeout(async () => {
+        await saveScoresToDatabase();
+        setShowFinalResults(true);
       }, 500);
       return;
     }
@@ -779,11 +909,8 @@ const GameBoard = () => {
         <DialogContent className="sm:max-w-2xl bg-card">
           <DialogHeader>
             <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 to-teal-600 bg-clip-text text-transparent">
-              🎉 Journey Complete! 🎉
+              Your Mental Health Assessment Results
             </DialogTitle>
-            <DialogDescription className="text-center text-lg pt-2">
-              You've reached the King! Here are your results:
-            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-6">

@@ -3,12 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Brain, Crown, Lightbulb, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useState } from "react";
+import InstructionSlides from "@/components/InstructionSlides";
 
 const Home = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const [showInstructions, setShowInstructions] = useState(false);
 
   const handleStartGame = () => {
+    setShowInstructions(true);
+  };
+
+  const handleStartPlay = () => {
     navigate("/game");
   };
 
@@ -119,6 +126,12 @@ const Home = () => {
           Roll the dice, answer with wisdom, and reach enlightenment
         </p>
       </div>
+
+      <InstructionSlides
+        open={showInstructions}
+        onClose={() => setShowInstructions(false)}
+        onStartGame={handleStartPlay}
+      />
     </div>
   );
 };
