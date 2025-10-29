@@ -911,11 +911,11 @@ const GameBoard = () => {
                     key={index}
                     onClick={() => handleAnswerSelect(index)}
                     variant="outline"
-                    className="h-16 text-lg border-2 border-orange-300/50 hover:border-orange-500 hover:bg-orange-50 dark:border-orange-700/50 dark:hover:border-orange-500 dark:hover:bg-orange-950/50 flex items-center justify-start gap-3 px-6"
+                    className="h-20 text-lg border-2 border-orange-300/50 hover:border-orange-500 hover:bg-orange-50 dark:border-orange-700/50 dark:hover:border-orange-500 dark:hover:bg-orange-950/50 flex items-center justify-start gap-4 px-6"
                   >
                     <span className="text-2xl">{index + 1}️⃣</span>
                     <span className="text-3xl">{option.emoji}</span>
-                    <span className="font-medium">{option.text}</span>
+                    <span className="font-semibold text-xl text-orange-900 dark:text-orange-100">{option.text}</span>
                   </Button>
                 ))}
               </div>
