@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LogOut, Users } from "lucide-react";
@@ -113,60 +114,86 @@ const InstituteDashboard = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6">
-            {scores.map((score) => (
-              <Card key={score.id} className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
-                    <span>Student Assessment</span>
-                    <span className="text-sm text-muted-foreground font-normal">
-                      {new Date(score.created_at).toLocaleDateString()}
-                    </span>
-                  </CardTitle>
-                  <CardDescription>User ID: {score.user_id}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-lg border-2 border-blue-200 dark:border-blue-800">
-                      <h3 className="text-lg font-bold text-blue-700 dark:text-blue-400 mb-1">
-                        Depression
-                      </h3>
-                      <p className="text-2xl font-bold text-blue-800 dark:text-blue-300">
-                        {score.depression_score}/42
-                      </p>
-                      <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                        Level: {getLevel(score.depression_score, "depression")}
-                      </p>
-                    </div>
-
-                    <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-4 rounded-lg border-2 border-yellow-200 dark:border-yellow-800">
-                      <h3 className="text-lg font-bold text-yellow-700 dark:text-yellow-400 mb-1">
-                        Anxiety
-                      </h3>
-                      <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-300">
-                        {score.anxiety_score}/42
-                      </p>
-                      <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">
-                        Level: {getLevel(score.anxiety_score, "anxiety")}
-                      </p>
-                    </div>
-
-                    <div className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-4 rounded-lg border-2 border-red-200 dark:border-red-800">
-                      <h3 className="text-lg font-bold text-red-700 dark:text-red-400 mb-1">
-                        Stress
-                      </h3>
-                      <p className="text-2xl font-bold text-red-800 dark:text-red-300">
-                        {score.stress_score}/42
-                      </p>
-                      <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-                        Level: {getLevel(score.stress_score, "stress")}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Card className="bg-white/90 backdrop-blur-sm shadow-2xl">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-orange-100 via-green-100 to-blue-100 dark:from-orange-900/40 dark:via-green-900/40 dark:to-blue-900/40 border-b-2 border-orange-300">
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200">Date</TableHead>
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200">User ID</TableHead>
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200 text-center">Depression Score</TableHead>
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200 text-center">Depression Level</TableHead>
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200 text-center">Anxiety Score</TableHead>
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200 text-center">Anxiety Level</TableHead>
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200 text-center">Stress Score</TableHead>
+                      <TableHead className="font-bold text-foreground text-base text-center">Stress Level</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {scores.map((score, index) => {
+                      const depLevel = getLevel(score.depression_score, "depression");
+                      const anxLevel = getLevel(score.anxiety_score, "anxiety");
+                      const stressLevel = getLevel(score.stress_score, "stress");
+                      
+                      return (
+                        <TableRow 
+                          key={score.id} 
+                          className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'} hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors`}
+                        >
+                          <TableCell className="border-r border-gray-200 dark:border-gray-700 font-medium">
+                            {new Date(score.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell className="border-r border-gray-200 dark:border-gray-700 font-mono text-sm">
+                            {score.user_id.substring(0, 8)}...
+                          </TableCell>
+                          <TableCell className="border-r border-gray-200 dark:border-gray-700 text-center font-semibold text-blue-700 dark:text-blue-400">
+                            {score.depression_score}/42
+                          </TableCell>
+                          <TableCell className="border-r border-gray-200 dark:border-gray-700 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <span className={`font-semibold ${depLevel === "Extremely Severe" ? "text-red-700 dark:text-red-400" : "text-blue-700 dark:text-blue-400"}`}>
+                                {depLevel}
+                              </span>
+                              {depLevel === "Extremely Severe" && (
+                                <span className="text-red-600 text-xl animate-pulse">⚠️</span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="border-r border-gray-200 dark:border-gray-700 text-center font-semibold text-yellow-700 dark:text-yellow-400">
+                            {score.anxiety_score}/42
+                          </TableCell>
+                          <TableCell className="border-r border-gray-200 dark:border-gray-700 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <span className={`font-semibold ${anxLevel === "Extremely Severe" ? "text-red-700 dark:text-red-400" : "text-yellow-700 dark:text-yellow-400"}`}>
+                                {anxLevel}
+                              </span>
+                              {anxLevel === "Extremely Severe" && (
+                                <span className="text-red-600 text-xl animate-pulse">⚠️</span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="border-r border-gray-200 dark:border-gray-700 text-center font-semibold text-red-700 dark:text-red-400">
+                            {score.stress_score}/42
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <span className={`font-semibold ${stressLevel === "Extremely Severe" ? "text-red-700 dark:text-red-400" : "text-red-700 dark:text-red-400"}`}>
+                                {stressLevel}
+                              </span>
+                              {stressLevel === "Extremely Severe" && (
+                                <span className="text-red-600 text-xl animate-pulse">⚠️</span>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
