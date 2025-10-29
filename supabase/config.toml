@@ -1,1 +1,4 @@
 project_id = "kzqbogsfcjvtfdbblylf"
+
+[functions.sera-chat]
+verify_jwt = true
