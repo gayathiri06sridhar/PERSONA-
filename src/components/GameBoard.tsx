@@ -740,19 +740,34 @@ const GameBoard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-teal-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 flex flex-col items-center justify-center p-4 gap-8 relative overflow-hidden">
-      {/* Mental health awareness background elements */}
+    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-amber-50 to-red-100 dark:from-orange-950 dark:via-amber-950 dark:to-red-950 flex flex-col items-center justify-center p-4 gap-8 relative overflow-hidden">
+      {/* Traditional Indian decorative background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-64 h-64 bg-purple-200/30 dark:bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-teal-200/30 dark:bg-teal-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-200/20 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
+        {/* Rangoli-inspired patterns */}
+        <div className="absolute top-10 left-10 w-72 h-72">
+          <div className="absolute inset-0 rounded-full border-8 border-orange-400/20 dark:border-orange-500/10" style={{ borderStyle: 'double' }}></div>
+          <div className="absolute inset-4 rounded-full border-4 border-red-400/20 dark:border-red-500/10" style={{ borderStyle: 'dashed' }}></div>
+          <div className="absolute inset-8 rounded-full border-2 border-amber-400/20 dark:border-amber-500/10"></div>
+        </div>
+        <div className="absolute bottom-20 right-20 w-96 h-96">
+          <div className="absolute inset-0 rounded-full border-8 border-red-400/20 dark:border-red-500/10" style={{ borderStyle: 'double' }}></div>
+          <div className="absolute inset-6 rounded-full border-6 border-orange-400/20 dark:border-orange-500/10" style={{ borderStyle: 'dotted' }}></div>
+        </div>
+        {/* Center lotus-inspired pattern */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]">
+          <div className="absolute inset-0 rounded-full border-8 border-amber-400/15 dark:border-amber-500/10" style={{ borderStyle: 'double' }}></div>
+          <div className="absolute inset-12 rounded-full border-6 border-orange-400/15 dark:border-orange-500/10" style={{ borderStyle: 'dotted' }}></div>
+        </div>
+        {/* Additional decorative mandala corners */}
+        <div className="absolute top-1/4 right-1/4 w-48 h-48 rounded-full border-4 border-orange-300/20 dark:border-orange-500/10" style={{ borderStyle: 'dashed' }}></div>
+        <div className="absolute bottom-1/4 left-1/4 w-48 h-48 rounded-full border-4 border-red-300/20 dark:border-red-500/10" style={{ borderStyle: 'dashed' }}></div>
       </div>
 
       <Button
         onClick={() => setShowExitDialog(true)}
         variant="outline"
         size="lg"
-        className="absolute top-4 left-4 text-lg px-6 py-3 z-10"
+        className="absolute top-4 left-4 text-lg px-6 py-3 z-10 border-2 border-orange-300 hover:bg-orange-50 dark:border-orange-700 dark:hover:bg-orange-950"
       >
         ← Back to Home
       </Button>
@@ -761,14 +776,14 @@ const GameBoard = () => {
         onClick={resetGame}
         variant="destructive"
         size="lg"
-        className="absolute top-4 right-4 text-lg px-6 py-3 z-10"
+        className="absolute top-4 right-4 text-lg px-6 py-3 z-10 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700"
       >
         Reset Game 🔄
       </Button>
 
       <div className="text-center space-y-2 relative z-10">
-        <h1 className="text-5xl font-bold text-foreground bg-gradient-to-r from-purple-600 to-teal-600 bg-clip-text text-transparent">Mythical Gamified Quiz</h1>
-        <p className="text-muted-foreground text-lg">Navigate through awareness & reach your goal!</p>
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-red-600 bg-clip-text text-transparent drop-shadow-lg">🪷 Persona</h1>
+        <p className="text-orange-900 dark:text-orange-200 text-lg font-medium">Navigate through awareness & reach your goal!</p>
       </div>
 
       {gameStarted && (
