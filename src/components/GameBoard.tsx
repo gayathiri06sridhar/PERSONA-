@@ -791,6 +791,39 @@ const GameBoard = () => {
         <p className="text-orange-900 dark:text-orange-200 text-lg font-medium">Navigate through awareness & reach your goal!</p>
       </div>
 
+      {/* Progress Bar - Top Position */}
+      {gameStarted && (
+        <div className="w-full max-w-4xl px-4 relative z-10">
+          <div className="bg-gradient-to-r from-orange-100 via-amber-100 to-red-100 dark:from-orange-900/40 dark:via-amber-900/40 dark:to-red-900/40 rounded-2xl p-6 shadow-2xl border-2 border-orange-300 dark:border-orange-600 backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-bold text-orange-900 dark:text-orange-100">
+                📊 Quiz Progress
+              </h3>
+              <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                {answeredQuestions.length}/21
+              </span>
+            </div>
+            
+            <div className="relative w-full bg-white/60 dark:bg-black/30 rounded-full h-6 overflow-hidden shadow-inner border border-orange-200 dark:border-orange-800">
+              <div 
+                className="bg-gradient-to-r from-orange-500 via-amber-500 to-red-500 h-full rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-3 shadow-lg"
+                style={{ width: `${(answeredQuestions.length / 21) * 100}%` }}
+              >
+                {answeredQuestions.length > 0 && (
+                  <span className="text-white text-xs font-bold drop-shadow">
+                    {Math.round((answeredQuestions.length / 21) * 100)}%
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            <p className="text-center text-orange-800 dark:text-orange-200 font-semibold text-sm mt-3">
+              Remaining Questions: <span className="text-lg font-bold text-orange-900 dark:text-orange-100">{21 - answeredQuestions.length}</span>
+            </p>
+          </div>
+        </div>
+      )}
+
       {gameStarted && (
         <div className="text-center relative z-10">
           <div className="text-xl font-semibold text-foreground mb-4">
@@ -855,25 +888,6 @@ const GameBoard = () => {
         <div className="flex flex-col items-center gap-4 relative z-10 mt-8">
           <Dice value={diceValue} isRolling={isRolling} />
           
-          {/* Progress Bar */}
-          <div className="w-full max-w-md bg-orange-200/50 dark:bg-orange-900/30 rounded-full p-1 border-2 border-orange-400 dark:border-orange-600">
-            <div className="flex flex-col items-center space-y-2">
-              <div className="w-full bg-orange-100 dark:bg-orange-950 rounded-full h-8 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-orange-500 via-amber-500 to-red-500 h-full rounded-full transition-all duration-500 flex items-center justify-center"
-                  style={{ width: `${(answeredQuestions.length / 21) * 100}%` }}
-                >
-                  <span className="text-white text-sm font-bold px-2">
-                    {answeredQuestions.length > 0 && `${answeredQuestions.length}/21`}
-                  </span>
-                </div>
-              </div>
-              <p className="text-orange-900 dark:text-orange-200 font-semibold text-lg">
-                Remaining Questions: {21 - answeredQuestions.length}
-              </p>
-            </div>
-          </div>
-
           <Button
             onClick={rollDice}
             disabled={isRolling || isMoving || playerPosition === 100}
