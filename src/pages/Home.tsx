@@ -81,8 +81,8 @@ const Home = () => {
           <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-red-600 bg-clip-text text-transparent drop-shadow-2xl tracking-wide">
             🪷 Persona
           </h1>
-          <p className="text-xl md:text-2xl text-orange-900 font-semibold">
-            A Journey Through Chess, Knowledge & Inner Wellness
+          <p className="text-xl md:text-2xl text-orange-900 font-semibold tracking-wider">
+            YOUR COMPANION BOT
           </p>
         </div>
 
