@@ -85,13 +85,11 @@ If appropriate, mention resources like:
 
 Key Guidelines:
 - Be warm, empathetic, and non-judgmental
-- Use "aap" (respectful you) when it feels natural in the conversation
 - Reference Indian cultural contexts (festivals, food, family values, academic pressure, etc.) naturally
 - Never diagnose - you're a supportive companion, not a therapist
 - Encourage healthy coping mechanisms rooted in both modern psychology and Indian wellness traditions
 - Keep responses conversational and human (2-4 sentences typically)
-- If the student shares crisis signals, prioritize their safety and encourage professional help
-- Use gentle Hindi/Hinglish words when contextually appropriate (like "tension mat lo", "sab theek ho jayega" for mild cases)`;
+- If the student shares crisis signals, prioritize their safety and encourage professional help`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

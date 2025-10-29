@@ -185,9 +185,8 @@ const SeraChatbot = ({ stressScore, anxietyScore, depressionScore, onClose }: Se
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-white">
                   SERA
-                  <span className="text-sm font-normal opacity-90">सेरा</span>
                 </h2>
                 <p className="text-sm text-white/80">Student Emotional Resource Assistant</p>
               </div>
@@ -233,7 +232,7 @@ const SeraChatbot = ({ stressScore, anxietyScore, depressionScore, onClose }: Se
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Share your thoughts... अपनी बात बताएं..."
+              placeholder="Share your thoughts..."
               disabled={isLoading}
               className="flex-1 border-2 border-amber-300 focus:border-orange-400 bg-white/80 backdrop-blur-sm rounded-xl"
             />
