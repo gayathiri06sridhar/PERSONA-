@@ -60,6 +60,37 @@ Assessment Results:
 - Stress Score: ${stressScore} (${stressLevel})
 - Overall Severity: ${overallSeverity}
 
+**Special Interaction Flows:**
+
+1. **Diet Planning**: When user asks for diet help:
+   - First ask: "What type of cuisine would you prefer? I can suggest meal plans for Indian, Kerala, Western, or Chinese cuisine."
+   - After they choose, provide the complete 7-day meal plan for that cuisine from these options:
+     * Indian: Traditional Ayurvedic-inspired meals (moong dal khichdi, bajra roti, rajma curry, etc.)
+     * Kerala: Kerala-style healthy meals (dosa, fish curry, appam, puttu, etc.)
+     * Western: Balanced Western diet (oatmeal, salads, grilled chicken, quinoa, etc.)
+     * Chinese: Healthy Chinese cuisine (steamed dumplings, congee, stir-fry noodles, etc.)
+   - Include all meals for all 7 days with proper formatting
+   - Add hydration tips and meal timing advice
+
+2. **Scheduling**: When user asks for time management help:
+   - If they mention uploading a timetable, analyze what they've shared
+   - Create a balanced daily schedule that includes:
+     * Study/work blocks with breaks
+     * Physical activity time
+     * Meals and hydration
+     * Relaxation/mindfulness periods
+     * Sleep schedule
+   - Customize based on their current routine if provided
+
+3. **Mind-Body Exercises**: When user asks for exercise recommendations:
+   - First ask: "To give you the best recommendations, could you share your gender, height, weight, and what type of activities you enjoy (yoga, cardio, strength training, etc.)?"
+   - After they provide info, suggest:
+     * Specific exercises suited to their profile
+     * Duration and frequency
+     * Breathing exercises and mindfulness techniques
+     * Progressive difficulty levels
+   - Include both physical exercises and mental wellness practices
+
 `;
 
     // Adjust tone based on severity
@@ -88,8 +119,11 @@ Key Guidelines:
 - Reference Indian cultural contexts (festivals, food, family values, academic pressure, etc.) naturally
 - Never diagnose - you're a supportive companion, not a therapist
 - Encourage healthy coping mechanisms rooted in both modern psychology and Indian wellness traditions
-- Keep responses conversational and human (2-4 sentences typically)
-- If the student shares crisis signals, prioritize their safety and encourage professional help`;
+- Keep responses conversational and human (2-4 sentences typically, but provide complete meal plans when requested)
+- If the student shares crisis signals, prioritize their safety and encourage professional help
+- When providing diet plans, exercises, or schedules, be thorough and specific
+- Format meal plans clearly with day-by-day breakdown
+- Make exercise recommendations progressive and achievable`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, Send, Sparkles } from "lucide-react";
+import { X, Send, Sparkles, Dumbbell, Calendar, UtensilsCrossed, Upload } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,8 +20,28 @@ const SeraChatbot = ({ stressScore, anxietyScore, depressionScore, onClose }: Se
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sera-chat`;
+
+  const suggestions = [
+    {
+      icon: Dumbbell,
+      label: "Mind-Body Exercise",
+      prompt: "I'm feeling really low today. Can you suggest some physical exercises or mindfulness techniques to make me feel better?"
+    },
+    {
+      icon: Calendar,
+      label: "Scheduling",
+      prompt: "I'm finding it hard to manage my time. Can you help me create a balanced daily schedule that reduces stress?"
+    },
+    {
+      icon: UtensilsCrossed,
+      label: "Diet Planning",
+      prompt: "I want to start eating better for my mental health. Can you help me plan a simple diet for better mood and focus?"
+    }
+  ];
 
   // Generate initial greeting based on scores
   const getInitialGreeting = () => {
@@ -150,6 +170,7 @@ const SeraChatbot = ({ stressScore, anxietyScore, depressionScore, onClose }: Se
     setMessages(newMessages);
     setInput("");
     setIsLoading(true);
+    setShowSuggestions(false);
 
     try {
       await streamChat(newMessages);
@@ -167,18 +188,57 @@ const SeraChatbot = ({ stressScore, anxietyScore, depressionScore, onClose }: Se
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex items-center justify-center p-4">
-      {/* Decorative Indian patterns */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-0 w-32 h-32 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0icGF0dGVybiIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSI4IiBmaWxsPSIjRkY5OTMzIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+')] opacity-40" />
-        <div className="absolute bottom-0 right-0 w-48 h-48 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0icGF0dGVybjIiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+PHBhdGggZD0iTTMwIDAgTDYwIDMwIEwzMCA2MCBMMCAzMCBaIiBmaWxsPSIjRkY2Nzg5Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4yKSIvPjwvc3ZnPg==')] opacity-30" />
-      </div>
+  const handleSuggestionClick = (prompt: string) => {
+    setInput(prompt);
+    setShowSuggestions(false);
+  };
 
-      <div className="relative w-full max-w-3xl h-[600px] bg-card/95 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-amber-200 flex flex-col overflow-hidden">
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const content = event.target?.result as string;
+      const userMessage: Message = { 
+        role: "user", 
+        content: `Here is my timetable:\n\n${content}\n\nPlease help me create a balanced daily schedule that reduces stress.` 
+      };
+      const newMessages = [...messages, userMessage];
+      setMessages(newMessages);
+      setIsLoading(true);
+      setShowSuggestions(false);
+
+      try {
+        await streamChat(newMessages);
+      } catch (error) {
+        console.error("Chat error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-orange-50 via-amber-50 to-teal-50 flex items-center justify-center p-4">
+      {/* Decorative Indian patterns - lotus and mandala */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-48 h-48 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAwIDQwIEw5MCA2MCBMMTAwIDgwIEwxMTAgNjAgWiBNMTAwIDQwIEwxMjAgNTAgTDEwMCA4MCBNMTAwIDQwIEw4MCA1MCBMMTAwIDgwIiBmaWxsPSIjRkY5OTMzIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4=')] opacity-50" />
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjYwIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRjk5MzMiIHN0cm9rZS13aWR0aD0iMiIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0QjhBNiIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+')] opacity-40" />
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".txt,.pdf,.doc,.docx"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+
+      <div className="relative w-full max-w-4xl h-[700px] bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-orange-200 flex flex-col overflow-hidden">
         {/* Header with Indian motif */}
-        <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 p-6 border-b-4 border-amber-600 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')] opacity-30" />
+        <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-teal-500 p-6 border-b-4 border-orange-300 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjMiLz48L3N2Zz4=')] opacity-30" />
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-2 border-white/40">
@@ -225,23 +285,44 @@ const SeraChatbot = ({ stressScore, anxietyScore, depressionScore, onClose }: Se
           </div>
         </ScrollArea>
 
-        {/* Input area with decorative elements */}
-        <div className="p-4 bg-gradient-to-r from-orange-100 via-amber-100 to-yellow-100 border-t-2 border-amber-300">
+        {/* Input area with suggestions */}
+        <div className="p-4 bg-gradient-to-r from-orange-50 via-amber-50 to-teal-50 border-t-2 border-orange-200">
+          {/* Suggestion buttons - ChatGPT style */}
+          {showSuggestions && messages.length <= 1 && (
+            <div className="mb-4 flex flex-wrap gap-2 justify-center">
+              {suggestions.map((suggestion, idx) => {
+                const Icon = suggestion.icon;
+                return (
+                  <Button
+                    key={idx}
+                    onClick={() => handleSuggestionClick(suggestion.prompt)}
+                    variant="outline"
+                    className="bg-white/80 border-2 border-orange-300 hover:border-orange-400 hover:bg-orange-50 text-foreground rounded-full px-4 py-2 shadow-sm transition-all hover:shadow-md font-medium"
+                  >
+                    <Icon className="w-4 h-4 mr-2 text-orange-500" />
+                    {suggestion.label}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
+          
           <div className="flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Share your thoughts..."
+              onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+              placeholder="Type your message here..."
               disabled={isLoading}
-              className="flex-1 border-2 border-amber-300 focus:border-orange-400 bg-white/80 backdrop-blur-sm rounded-xl"
+              className="flex-1 border-2 border-orange-300 focus:border-orange-400 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 text-base font-normal"
+              style={{ fontFamily: "'Poppins', 'Noto Sans', sans-serif" }}
             />
             <Button
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
-              className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl px-6 shadow-md"
+              className="bg-gradient-to-r from-orange-500 to-teal-500 hover:from-orange-600 hover:to-teal-600 text-white rounded-xl px-6 shadow-md transition-all hover:shadow-lg"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-5 h-5" />
             </Button>
           </div>
         </div>
