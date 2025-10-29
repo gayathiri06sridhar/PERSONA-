@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LogOut, Users } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface StudentScore {
   id: string;
@@ -19,19 +20,41 @@ interface StudentScore {
 
 const InstituteDashboard = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [scores, setScores] = useState<StudentScore[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Check if institute is logged in
-    const isLoggedIn = localStorage.getItem("instituteLoggedIn");
-    if (!isLoggedIn) {
-      navigate("/institute-login");
-      return;
-    }
+    const checkAdminAndFetchData = async () => {
+      if (authLoading) return;
 
-    fetchStudentScores();
-  }, [navigate]);
+      if (!user) {
+        navigate("/institute-login");
+        return;
+      }
+
+      // Verify user has admin role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .single();
+
+      if (roleError || !roleData) {
+        toast.error("Access denied. Admin privileges required.");
+        await supabase.auth.signOut();
+        navigate("/institute-login");
+        return;
+      }
+
+      setIsAdmin(true);
+      fetchStudentScores();
+    };
+
+    checkAdminAndFetchData();
+  }, [user, authLoading, navigate]);
 
   const fetchStudentScores = async () => {
     try {
@@ -50,8 +73,8 @@ const InstituteDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("instituteLoggedIn");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     toast.success("Logged out successfully");
     navigate("/");
   };
@@ -77,6 +100,14 @@ const InstituteDashboard = () => {
       return "Extremely Severe";
     }
   };
+
+  if (authLoading || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-green-50 to-blue-50">
+        <div className="text-lg text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-green-50 to-blue-50 p-6">

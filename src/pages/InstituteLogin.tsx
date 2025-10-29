@@ -6,24 +6,47 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Building2, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const InstituteLogin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleInstituteLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Static credentials check
-    if (username === "kingston@123" && password === "kec@123") {
+    try {
+      // Sign in with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      // Check if user has admin role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authData.user.id)
+        .eq('role', 'admin')
+        .single();
+
+      if (roleError || !roleData) {
+        await supabase.auth.signOut();
+        toast.error("Access denied. Admin privileges required.");
+        setIsLoading(false);
+        return;
+      }
+
       toast.success("Institute login successful!");
-      localStorage.setItem("instituteLoggedIn", "true");
       navigate("/institute-dashboard");
-    } else {
-      toast.error("Invalid credentials. Please check your username and password.");
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.message || "Invalid credentials. Please try again.");
     }
     
     setIsLoading(false);
@@ -48,13 +71,13 @@ const InstituteLogin = () => {
         <CardContent className="space-y-4">
           <form onSubmit={handleInstituteLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                placeholder="Enter institute username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="Enter institute email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
