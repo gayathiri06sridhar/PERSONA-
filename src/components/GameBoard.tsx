@@ -51,10 +51,10 @@ const GameBoard = () => {
       funFact: "Delhi Metro is the busiest and longest metro system in India, approximately 389 km and 285 stations and nearly 4 million passengers daily.",
       question: "I feel like my mind runs constantly as Delhi Metro, finding it hard to wind down.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -63,10 +63,10 @@ const GameBoard = () => {
       funFact: "World's largest integrated film studio complex is Ramoji Film City, located in Hyderabad, India, and was opened in 1996.",
       question: "My reactions are mostly cinematic and I tend to overreact to situations.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -75,10 +75,10 @@ const GameBoard = () => {
       funFact: "The Bhangarh Fort, once grand and powerful, became abandoned due to the curse of a strong ascetic Guru Balunath with a lot of nervous energy.",
       question: "I feel I use a lot of nervous energy.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -87,10 +87,10 @@ const GameBoard = () => {
       funFact: "The 2004 Indian Ocean tsunami was caused by a magnitude 9.1 earthquake and its energy was equivalent to 23,000 Hiroshima-sized atomic bombs.",
       question: "Like the oceans during the tsunami, I find myself getting agitated.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -99,10 +99,10 @@ const GameBoard = () => {
       funFact: "Coorg is famously known as \"Scotland of India\" due to its cool climate, hilly terrain, and scenic beauty.",
       question: "I think I may find it difficult to relax even in places like Coorg.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -111,10 +111,10 @@ const GameBoard = () => {
       funFact: "The 2002 Gujarat riots in India erupted like a volcano due to intolerance among humans.",
       question: "I am intolerant of anything that keeps me from getting on with what I was doing.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -123,10 +123,10 @@ const GameBoard = () => {
       funFact: "The Taj Mahal in Agra is a UNESCO World Heritage site that appears to change color throughout the day, looking pinkish in the morning, milky white in the evening, and golden in the moonlight.",
       question: "I feel I am rather touchy, like a delicate petal in the shadow of the Taj Mahal, sensitive to every ripple of the world around me.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -135,10 +135,10 @@ const GameBoard = () => {
       funFact: "Thar Desert of India is the most densely populated desert in the world.",
       question: "My mouth feels dry like the wind of the Thar Desert.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -147,10 +147,10 @@ const GameBoard = () => {
       funFact: "Shimla is a world heritage site. It is the only Indian place where natural ice skating takes place.",
       question: "I experience breathing difficulty sometimes, like I am running across Shimla's cold mountains up and down.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -159,10 +159,10 @@ const GameBoard = () => {
       funFact: "The massive energy released by the 2004 Sumatra–Andaman Earthquake caused the entire planet to vibrate as much as 1 mm.",
       question: "I experience trembling often like an earthquake.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -171,10 +171,10 @@ const GameBoard = () => {
       funFact: "'Thenali,' an Indian Tamil comedy film shot at Kodaikanal, tells the story of a man who is both neurotic and multiphobic.",
       question: "I am worried about situations in which I might panic and make a fool of myself just like Thenali.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -183,10 +183,10 @@ const GameBoard = () => {
       funFact: "Dumas Beach in Surat is known for its black sand and its reputation as one of the country's most haunted places.",
       question: "I feel like I am close to panic as though I am in Dumas Beach.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -195,10 +195,10 @@ const GameBoard = () => {
       funFact: "Leh–Ladakh offers rugged terrain ideal for high-altitude trekking, like the famous Chadar Trek, and extensive mountain biking opportunities making our hearts skip a beat.",
       question: "I am aware of the action of my heart in the absence of physical exertion (e.g., sense of heart rate increase, heart missing a beat, etc.).",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -207,10 +207,10 @@ const GameBoard = () => {
       funFact: "Rani Lakshmibai, Queen of Jhansi, was a fearless leader of the Indian Rebellion of 1857.",
       question: "Sometimes I feel scared without any good reason, unlike Rani Lakshmibai.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -219,10 +219,10 @@ const GameBoard = () => {
       funFact: "Rishikesh of Uttarakhand is known as the Yoga Capital of the World, surrounded by the Himalayas.",
       question: "I couldn't seem to experience any positive feeling at all. I think I need to go to Rishikesh.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -231,10 +231,10 @@ const GameBoard = () => {
       funFact: "The first sunrise in India is at Dong village in Anjaw District of Arunachal Pradesh.",
       question: "I watch opportunities appear like sunrise in Dong village but find it difficult to work up the initiative to do things.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -243,10 +243,10 @@ const GameBoard = () => {
       funFact: "Kanchenjunga is the third highest mountain in the world and its name means 'five treasures of snow' after its five high peaks.",
       question: "When I look forward toward Kanchenjunga, I see five high peaks but personally I feel like I have nothing to look forward to.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -255,10 +255,10 @@ const GameBoard = () => {
       funFact: "Siachen Glacier is the world's highest and coldest battlefield.",
       question: "I feel down-hearted and blue, like I am at Siachen Glacier, losing a battle.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -267,10 +267,10 @@ const GameBoard = () => {
       funFact: "Wonderla Kochi is the first park in India to get ISO 14001 certificate for eco-friendliness and OHSAS 18001 certificate for safety.",
       question: "Even if I am in Wonderla, I feel I am unable to become enthusiastic about anything.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -279,10 +279,10 @@ const GameBoard = () => {
       funFact: "Dr. A. P. J. Abdul Kalam, born in Rameswaram, is lovingly called the 'People's President' and 'Missile Man of India.'",
       question: "I feel I am not worth much as a person. But I need to strive to be like our beloved president.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     },
     {
@@ -291,10 +291,10 @@ const GameBoard = () => {
       funFact: "Bhakra–Nangal Multipurpose River Valley Project is a joint venture between Punjab, Haryana, and Rajasthan providing irrigation and hydroelectric power.",
       question: "I feel life is meaningless without any purpose.",
       options: [
-        { emoji: "☀" },
-        { emoji: "🌤" },
-        { emoji: "🌧" },
-        { emoji: "⛈" }
+        { emoji: "☀", text: "Not at all" },
+        { emoji: "🌤", text: "Sometimes" },
+        { emoji: "🌧", text: "Often" },
+        { emoji: "⛈", text: "Always" }
       ]
     }
   ];
@@ -911,9 +911,11 @@ const GameBoard = () => {
                     key={index}
                     onClick={() => handleAnswerSelect(index)}
                     variant="outline"
-                    className="h-16 text-4xl border-2 border-primary/30 hover:border-primary hover:bg-primary/10"
+                    className="h-16 text-lg border-2 border-orange-300/50 hover:border-orange-500 hover:bg-orange-50 dark:border-orange-700/50 dark:hover:border-orange-500 dark:hover:bg-orange-950/50 flex items-center justify-start gap-3 px-6"
                   >
-                    {option.emoji}
+                    <span className="text-2xl">{index + 1}️⃣</span>
+                    <span className="text-3xl">{option.emoji}</span>
+                    <span className="font-medium">{option.text}</span>
                   </Button>
                 ))}
               </div>
