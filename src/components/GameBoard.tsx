@@ -454,46 +454,32 @@ const GameBoard = () => {
       const newPosition = startPosition + currentStep;
       setPlayerPosition(newPosition);
       
-      // Check if we crossed or landed on a question position during this step
-      const questionToAsk = questions.find(q => 
-        newPosition >= q.position && 
-        startPosition < q.position && 
-        !answeredQuestions.includes(q.id)
-      );
-      
-      if (questionToAsk) {
-        clearInterval(interval);
-        setIsMoving(false);
-        setTimeout(() => {
-          setCurrentQuestion(questionToAsk);
-          setShowQuestionDialog(true);
-        }, 500);
-        return;
-      }
-      
       if (currentStep >= steps) {
         clearInterval(interval);
         setIsMoving(false);
         
+        // After movement completes, check for ALL skipped questions
+        const skippedQuestions = questions.filter(q => 
+          q.position > startPosition && 
+          q.position <= newPosition && 
+          !answeredQuestions.includes(q.id)
+        );
+        
+        // Show skipped questions if any
+        if (skippedQuestions.length > 0) {
+          setTimeout(() => {
+            setCurrentQuestion(skippedQuestions[0]);
+            setShowQuestionDialog(true);
+          }, 500);
+          return;
+        }
+        
         // Check if reached 100
         if (newPosition === 100) {
-          // Check for any skipped questions before showing results
-          const skippedQuestions = questions.filter(q => 
-            newPosition >= q.position && 
-            !answeredQuestions.includes(q.id)
-          );
-          
-          if (skippedQuestions.length > 0) {
-            setTimeout(() => {
-              setCurrentQuestion(skippedQuestions[0]);
-              setShowQuestionDialog(true);
-            }, 500);
-          } else {
-            setTimeout(async () => {
-              await saveScoresToDatabase();
-              setShowFinalResults(true);
-            }, 500);
-          }
+          setTimeout(async () => {
+            await saveScoresToDatabase();
+            setShowFinalResults(true);
+          }, 500);
           return;
         }
         
