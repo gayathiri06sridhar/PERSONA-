@@ -7,7 +7,6 @@ import Dice from "@/components/Dice";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import SeraChatbot from "./SeraChatbot";
 
 type PieceType = "pawn" | "king" | "queen" | "rook" | "bishop" | "knight" | null;
 
@@ -35,7 +34,6 @@ const GameBoard = () => {
   const [showFinalResults, setShowFinalResults] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [scoresSaved, setScoresSaved] = useState(false);
-  const [showSeraChatbot, setShowSeraChatbot] = useState(false);
 
   // Questions for specific positions
   const questionPositions = [5, 9, 14, 18, 23, 27, 30, 33, 37, 40, 48, 52, 56, 60, 64, 70, 75, 80, 87, 95, 98];
@@ -1054,16 +1052,6 @@ const GameBoard = () => {
           
           <div className="flex justify-center gap-4 pt-4">
             <Button 
-              onClick={() => {
-                setShowFinalResults(false);
-                setShowSeraChatbot(true);
-              }}
-              size="lg"
-              className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white"
-            >
-              Talk to SERA 💬
-            </Button>
-            <Button 
               onClick={resetGame} 
               size="lg"
               className="bg-gradient-to-r from-purple-600 to-teal-600 hover:from-purple-700 hover:to-teal-700 text-white"
@@ -1073,15 +1061,6 @@ const GameBoard = () => {
           </div>
         </DialogContent>
       </Dialog>
-
-      {showSeraChatbot && (
-        <SeraChatbot
-          stressScore={stressScore * 2}
-          anxietyScore={anxietyScore * 2}
-          depressionScore={depressionScore * 2}
-          onClose={() => setShowSeraChatbot(false)}
-        />
-      )}
 
       <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
         <AlertDialogContent>
