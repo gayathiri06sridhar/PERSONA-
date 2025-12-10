@@ -11,42 +11,78 @@ import { supabase } from "@/integrations/supabase/client";
 const InstituteLogin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
 
-  const handleInstituteLogin = async (e: React.FormEvent) => {
+  const handleInstituteAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Sign in with Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      if (isSignUp) {
+        // Sign up new admin
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            },
+            emailRedirectTo: `${window.location.origin}/institute-login`,
+          },
+        });
 
-      if (authError) throw authError;
+        if (signUpError) throw signUpError;
 
-      // Check if user has admin role
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', authData.user.id)
-        .eq('role', 'admin')
-        .single();
+        if (signUpData.user) {
+          // Assign admin role to the new user
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .update({ role: 'admin' })
+            .eq('user_id', signUpData.user.id);
 
-      if (roleError || !roleData) {
-        await supabase.auth.signOut();
-        toast.error("Access denied. Admin privileges required.");
-        setIsLoading(false);
-        return;
+          if (roleError) {
+            // If update fails, try insert (in case trigger didn't create the role yet)
+            await supabase
+              .from('user_roles')
+              .insert({ user_id: signUpData.user.id, role: 'admin' });
+          }
+        }
+
+        toast.success("Admin account created! You can now sign in.");
+        setIsSignUp(false);
+      } else {
+        // Sign in existing admin
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (authError) throw authError;
+
+        // Check if user has admin role
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', authData.user.id)
+          .eq('role', 'admin')
+          .single();
+
+        if (roleError || !roleData) {
+          await supabase.auth.signOut();
+          toast.error("Access denied. Admin privileges required.");
+          setIsLoading(false);
+          return;
+        }
+
+        toast.success("Institute login successful!");
+        navigate("/institute-dashboard");
       }
-
-      toast.success("Institute login successful!");
-      navigate("/institute-dashboard");
     } catch (error: any) {
-      console.error('Login error:', error);
-      toast.error(error.message || "Invalid credentials. Please try again.");
+      console.error('Auth error:', error);
+      toast.error(error.message || "An error occurred. Please try again.");
     }
     
     setIsLoading(false);
@@ -62,14 +98,27 @@ const InstituteLogin = () => {
             </div>
           </div>
           <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-orange-600 via-green-600 to-blue-600 bg-clip-text text-transparent">
-            Institute Login
+            {isSignUp ? "Admin Sign Up" : "Institute Login"}
           </CardTitle>
           <CardDescription className="text-center">
-            Access student assessment results
+            {isSignUp ? "Create an admin account" : "Access student assessment results"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form onSubmit={handleInstituteLogin} className="space-y-4">
+          <form onSubmit={handleInstituteAuth} className="space-y-4">
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -90,6 +139,7 @@ const InstituteLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
               />
             </div>
             <Button
@@ -98,9 +148,35 @@ const InstituteLogin = () => {
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Login as Institute
+              {isSignUp ? "Create Admin Account" : "Login as Institute"}
             </Button>
           </form>
+
+          <div className="text-center text-sm">
+            {isSignUp ? (
+              <>
+                Already have an admin account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(false)}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign In
+                </button>
+              </>
+            ) : (
+              <>
+                Need an admin account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(true)}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+          </div>
 
           <div className="text-center text-sm">
             <button
