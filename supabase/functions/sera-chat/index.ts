@@ -9,7 +9,101 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, stressScore, anxietyScore, depressionScore } = await req.json();
+    // Parse and validate request body
+    let requestBody: unknown;
+    try {
+      requestBody = await req.json();
+    } catch {
+      console.error("Invalid JSON in request body");
+      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate required fields and types
+    if (typeof requestBody !== "object" || requestBody === null) {
+      return new Response(JSON.stringify({ error: "Request body must be an object" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const body = requestBody as Record<string, unknown>;
+    const { messages, stressScore, anxietyScore, depressionScore } = body;
+
+    // Validate messages array
+    if (!Array.isArray(messages)) {
+      return new Response(JSON.stringify({ error: "messages must be an array" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate each message has role and content
+    for (const msg of messages) {
+      if (typeof msg !== "object" || msg === null) {
+        return new Response(JSON.stringify({ error: "Each message must be an object" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const message = msg as Record<string, unknown>;
+      if (typeof message.role !== "string" || !["user", "assistant", "system"].includes(message.role)) {
+        return new Response(JSON.stringify({ error: "Each message must have a valid role (user, assistant, or system)" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (typeof message.content !== "string") {
+        return new Response(JSON.stringify({ error: "Each message must have content as a string" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      // Limit message content length to prevent abuse
+      if (message.content.length > 10000) {
+        return new Response(JSON.stringify({ error: "Message content exceeds maximum length of 10000 characters" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // Limit number of messages to prevent context overflow
+    if (messages.length > 50) {
+      return new Response(JSON.stringify({ error: "Too many messages in conversation (max 50)" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate scores are numbers within expected range (0-42 for DASS-21 doubled)
+    const validateScore = (score: unknown, name: string): number => {
+      if (typeof score !== "number" || isNaN(score)) {
+        throw new Error(`${name} must be a valid number`);
+      }
+      if (score < 0 || score > 42) {
+        throw new Error(`${name} must be between 0 and 42`);
+      }
+      return score;
+    };
+
+    let validatedStressScore: number;
+    let validatedAnxietyScore: number;
+    let validatedDepressionScore: number;
+
+    try {
+      validatedStressScore = validateScore(stressScore, "stressScore");
+      validatedAnxietyScore = validateScore(anxietyScore, "anxietyScore");
+      validatedDepressionScore = validateScore(depressionScore, "depressionScore");
+    } catch (validationError) {
+      return new Response(JSON.stringify({ error: validationError instanceof Error ? validationError.message : "Invalid score" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -38,9 +132,9 @@ serve(async (req) => {
       return "normal";
     };
 
-    const depLevel = getDepLevel(depressionScore);
-    const anxLevel = getAnxLevel(anxietyScore);
-    const stressLevel = getStressLevel(stressScore);
+    const depLevel = getDepLevel(validatedDepressionScore);
+    const anxLevel = getAnxLevel(validatedAnxietyScore);
+    const stressLevel = getStressLevel(validatedStressScore);
 
     // Determine overall severity (highest level among all three)
     const severityLevels = ["normal", "mild", "moderate", "severe", "extremely_severe"];
@@ -55,9 +149,9 @@ serve(async (req) => {
     let systemPrompt = `You are SERA (Student Emotional Resource Assistant), a compassionate AI counselor trained in evidence-based therapeutic techniques for Indian students. You've just helped a student complete a mental health self-assessment game.
 
 Assessment Results:
-- Depression Score: ${depressionScore} (${depLevel})
-- Anxiety Score: ${anxietyScore} (${anxLevel})
-- Stress Score: ${stressScore} (${stressLevel})
+- Depression Score: ${validatedDepressionScore} (${depLevel})
+- Anxiety Score: ${validatedAnxietyScore} (${anxLevel})
+- Stress Score: ${validatedStressScore} (${stressLevel})
 - Overall Severity: ${overallSeverity}
 
 **Core Therapeutic Approach:**
