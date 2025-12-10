@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -28,6 +28,12 @@ const GameBoard = () => {
   const [showQuestionDialog, setShowQuestionDialog] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<any>(null);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
+  const answeredQuestionsRef = useRef<number[]>([]);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    answeredQuestionsRef.current = answeredQuestions;
+  }, [answeredQuestions]);
   const [stressScore, setStressScore] = useState(0);
   const [anxietyScore, setAnxietyScore] = useState(0);
   const [depressionScore, setDepressionScore] = useState(0);
@@ -460,7 +466,7 @@ const GameBoard = () => {
         const skippedQuestions = questions.filter(q => 
           q.position > startPosition && 
           q.position <= newPosition && 
-          !answeredQuestions.includes(q.id)
+          !answeredQuestionsRef.current.includes(q.id)
         );
         
         // Show skipped questions if any
@@ -510,6 +516,7 @@ const GameBoard = () => {
     setShowQueenDialog(false);
     setShowQuestionDialog(false);
     setAnsweredQuestions([]);
+    answeredQuestionsRef.current = [];
     setCurrentQuestion(null);
     setStressScore(0);
     setAnxietyScore(0);
@@ -535,7 +542,7 @@ const GameBoard = () => {
             const skippedQuestions = questions.filter(q => 
               move >= q.position && 
               position < q.position && 
-              !answeredQuestions.includes(q.id)
+              !answeredQuestionsRef.current.includes(q.id)
             );
             
             setPlayerPosition(move);
@@ -560,7 +567,7 @@ const GameBoard = () => {
         const rookSkippedQuestions = questions.filter(q => 
           rookMove >= q.position && 
           position < q.position && 
-          !answeredQuestions.includes(q.id)
+          !answeredQuestionsRef.current.includes(q.id)
         );
         
         setTimeout(() => {
@@ -596,7 +603,7 @@ const GameBoard = () => {
             // Check for skipped questions during knight move
             const knightSkippedQuestions = questions.filter(q => 
               (move <= q.position && q.position <= position) && 
-              !answeredQuestions.includes(q.id)
+              !answeredQuestionsRef.current.includes(q.id)
             );
             
             setPlayerPosition(move);
@@ -635,7 +642,7 @@ const GameBoard = () => {
     const queenSkippedQuestions = questions.filter(q => 
       newPos >= q.position && 
       currentPos < q.position && 
-      !answeredQuestions.includes(q.id)
+      !answeredQuestionsRef.current.includes(q.id)
     );
     
     setPlayerPosition(newPos);
@@ -698,10 +705,11 @@ const GameBoard = () => {
       setAnsweredQuestions(updatedAnsweredQuestions);
       setShowQuestionDialog(false);
       
-      // Check if there are more unanswered questions that were crossed
-      // Use the updated list to check, not the stale state
+      // Check if there are more unanswered questions that were crossed during THIS movement
+      // Only show questions that are between starting position and current position
+      // and haven't been answered yet
       const nextQuestion = questions.find(q => 
-        playerPosition >= q.position && 
+        q.position <= playerPosition && 
         !updatedAnsweredQuestions.includes(q.id)
       );
       
