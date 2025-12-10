@@ -202,7 +202,7 @@ const InstituteDashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gradient-to-r from-orange-100 via-green-100 to-blue-100 dark:from-orange-900/40 dark:via-green-900/40 dark:to-blue-900/40 border-b-2 border-orange-300">
-                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200">Date</TableHead>
+                      <TableHead className="font-bold text-foreground text-base border-r border-orange-200">Date & Time</TableHead>
                       <TableHead className="font-bold text-foreground text-base border-r border-orange-200">Username</TableHead>
                       <TableHead className="font-bold text-foreground text-base border-r border-orange-200 text-center">Depression Score</TableHead>
                       <TableHead className="font-bold text-foreground text-base border-r border-orange-200 text-center">Depression Level</TableHead>
@@ -224,7 +224,12 @@ const InstituteDashboard = () => {
                           className={`${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'} hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors`}
                         >
                           <TableCell className="border-r border-gray-200 dark:border-gray-700 font-medium">
-                            {new Date(score.created_at).toLocaleDateString()}
+                            <div className="flex flex-col">
+                              <span>{new Date(score.created_at).toLocaleDateString()}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {new Date(score.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
                           </TableCell>
                           <TableCell className="border-r border-gray-200 dark:border-gray-700 font-medium">
                             {score.full_name || score.user_id.substring(0, 8)}
