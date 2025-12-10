@@ -695,38 +695,42 @@ const GameBoard = () => {
         setDepressionScore(prev => prev + points);
       }
       
-      setAnsweredQuestions([...answeredQuestions, currentQuestion.id]);
-    }
-    setShowQuestionDialog(false);
-    
-    // Check if there are more unanswered questions that were crossed
-    const nextQuestion = questions.find(q => 
-      playerPosition >= q.position && 
-      !answeredQuestions.includes(q.id) &&
-      q.id !== currentQuestion?.id
-    );
-    
-    if (nextQuestion) {
-      setTimeout(() => {
-        setCurrentQuestion(nextQuestion);
-        setShowQuestionDialog(true);
-      }, 500);
-      return;
-    }
-    
-    // Check if reached 100 after answering all questions
-    if (playerPosition === 100) {
-      setTimeout(async () => {
-        await saveScoresToDatabase();
-        setShowFinalResults(true);
-      }, 500);
-      return;
-    }
-    
-    // Continue checking for pieces after answering all questions
-    const landedPiece = pieces[playerPosition];
-    if (landedPiece) {
-      setTimeout(() => handlePieceLanding(landedPiece.type, playerPosition), 500);
+      // Create updated answered questions list including current question
+      const updatedAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
+      setAnsweredQuestions(updatedAnsweredQuestions);
+      setShowQuestionDialog(false);
+      
+      // Check if there are more unanswered questions that were crossed
+      // Use the updated list to check, not the stale state
+      const nextQuestion = questions.find(q => 
+        playerPosition >= q.position && 
+        !updatedAnsweredQuestions.includes(q.id)
+      );
+      
+      if (nextQuestion) {
+        setTimeout(() => {
+          setCurrentQuestion(nextQuestion);
+          setShowQuestionDialog(true);
+        }, 500);
+        return;
+      }
+      
+      // Check if reached 100 after answering all questions
+      if (playerPosition === 100) {
+        setTimeout(async () => {
+          await saveScoresToDatabase();
+          setShowFinalResults(true);
+        }, 500);
+        return;
+      }
+      
+      // Continue checking for pieces after answering all questions
+      const landedPiece = pieces[playerPosition];
+      if (landedPiece) {
+        setTimeout(() => handlePieceLanding(landedPiece.type, playerPosition), 500);
+      }
+    } else {
+      setShowQuestionDialog(false);
     }
   };
 
